@@ -1,0 +1,1 @@
+1. In Search Repository page, If user put unknown handle, then show a snack message that it is unknown handle.
