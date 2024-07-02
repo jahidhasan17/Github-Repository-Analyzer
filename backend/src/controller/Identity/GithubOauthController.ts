@@ -80,15 +80,17 @@ async function githubOauthLoginSuccess(req: Request, res: Response, next: NextFu
 
 	try {
 
-		let user = await UserModel.findOne<User>({
-			UserName: userClaims.UserName,
-			Provider: Provider.GITHUB
+		let user = await UserModel.findOne({
+			where: {
+				UserName: userClaims.UserName,
+				Provider: Provider.GITHUB
+			}
 		})
 
 		console.log("user", user);
 	
 		if(!user) {
-			user = await new UserModel<User>({...userClaims} as User).save();
+			user = await UserModel.create({...userClaims} as User);
 
 			console.log("New User", user);
 		}
@@ -104,14 +106,15 @@ async function githubOauthLoginSuccess(req: Request, res: Response, next: NextFu
 		const refreshTokenExpiryTime = process.env.REFRESH_TOKEN_EXPIRY_TIME as unknown;
 		console.log("refreshTokenExpiryTime",refreshTokenExpiryTime);
 
-		await UserTokenModel.updateOne<UserToken>(
-			{UserId : user._id},
-			{$set : {
-				RefreshToken: RefreshToken,
-				GithubAccessToken: encrypt(accessToken),
-				RefreshTokenExpiryTime: addMinutes(Date.now(), refreshTokenExpiryTime as number)
-			}},
-			{upsert: true}
+		await UserTokenModel.update(
+			{UserId : user.id},
+			{
+				where : {
+					RefreshToken: RefreshToken,
+					GithubAccessToken: encrypt(accessToken),
+					RefreshTokenExpiryTime: addMinutes(Date.now(), refreshTokenExpiryTime as number)
+				}
+			}
 		);
 
 

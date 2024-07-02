@@ -8,7 +8,7 @@ const signUpValidation = (userModel: User) => {
 		UserName: Joi.string().required().label("User Name"),
 		Email: Joi.string().email().label("Email"),
 		Password: Joi.string().min(4).max(8).required().label("Password"),
-	})
+	});
 
 	return schema.validate(userModel);
 }

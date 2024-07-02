@@ -28,17 +28,21 @@ async function refresh(req: Request, res: Response, next: NextFunction) {
 			return next(createHttpError(400, "Token Not Valid"));
 		}
 	
-		const user = await UserModel.findOne<User>({
-			UserName: claims.UserName
+		const user = await UserModel.findOne({
+			where: {
+				UserName: claims.UserName,
+			}
 		});
 
 		
-		if(!user || !user._id) {
+		if(!user || !user.id) {
 			return next(createHttpError(400, "Token not Valid. User Not Found"));
 		}
 	
-		const userTokenInfo = await UserTokenModel.findOne<UserToken>({
-			UserId: user._id,
+		const userTokenInfo = await UserTokenModel.findOne({
+			where: {
+				UserId: user.id,
+			}
 		});
 
 
@@ -56,12 +60,13 @@ async function refresh(req: Request, res: Response, next: NextFunction) {
 
 		const refreshToken = generateRefreshToken();
 	
-		await UserTokenModel.updateOne<UserToken>(
-			{UserId : user._id},
-			{$set : {
-				RefreshToken: refreshToken
-			}},
-			{upsert: true}
+		await UserTokenModel.update(
+			{UserId : user.id},
+			{
+				where : {
+					RefreshToken: refreshToken
+				}
+			}
 		);
 	
 		res.status(200).json({

@@ -1,22 +1,29 @@
 import express from "express";
-import dbConnect from "./database/connection/dbConnect";
 import { errorHandler, notFoundHandler } from "./middlewares/shared/errorHandler";
 import router from "./router/route";
 import cors from "cors";
 import path from "path";
 import { config } from "./config/config";
+import sequelize from "./database/connection/sequelize";
 
 const app = express();
 
-// database connection
-dbConnect();
+// db connection
+// (async () => {
+// 	try {
+// 		await sequelize.authenticate();
+// 		await sequelize.sync();
+// 		console.log('Connection has been established successfully.');
+// 	} catch (error) {
+// 		console.error('Unable to connect to the database:', error);
+// 	}
+// })();
 
 //handing cors
 app.use(cors({
 	origin: [
 		"http://localhost:3000",
 		"http://localhost:3001",
-		"https://githubrepositoryanalysis.herokuapp.com/"
 	]
 }))
 

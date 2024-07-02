@@ -5,6 +5,7 @@ const axiosInstance = setupInterceptorsTo(axios);
 
 
 export function signup(body: any) {
+	console.log(process.env);
 	return axiosInstance.post(process.env.REACT_APP_BASE_URL + "api/identity/signup", body);
 }
 

@@ -1,27 +1,40 @@
-import { Schema, model } from "mongoose";
 import { UserToken } from "./interfaces/UserToken";
+import sequelize from "../database/connection/sequelize";
+import { DataTypes, Optional, Model } from "sequelize";
 
+interface UserCreationAttributes extends Optional<UserToken, "id"> {}
 
+interface UserTokenInstance extends Model<UserToken, UserCreationAttributes>, UserToken {
+	createdAt?: Date;
+	updatedAt?: Date;
+}
 
-const userTokenSchema = new Schema<UserToken>({
+const UserTokenModel = sequelize.define<UserTokenInstance>("UserToken", {
+	id: {
+		type: DataTypes.UUID,
+		autoIncrement: false,
+		primaryKey: true,
+		unique: true,
+		allowNull: false,
+		defaultValue: DataTypes.UUIDV4,
+	},
 	UserId: {
-		type: Schema.Types.ObjectId,
-		required: true,
+		type: DataTypes.UUID,
+		allowNull: false,
+		unique: true,
 	},
 	RefreshToken: {
-		type: String,
-		required: true,
+		type: DataTypes.STRING,
+		allowNull: false,
 	},
 	GithubAccessToken: {
-		type: String,
+		type: DataTypes.STRING,
 	},
 	RefreshTokenExpiryTime: {
-		type: Date,
-		default: Date.now,
-		required: true,
-	},
+		type: DataTypes.DATE,
+		defaultValue: DataTypes.NOW,
+		allowNull: false,
+	}
 });
-
-const UserTokenModel = model<UserToken>("UserToken", userTokenSchema);
 
 export {UserTokenModel};

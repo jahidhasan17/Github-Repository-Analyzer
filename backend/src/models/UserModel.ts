@@ -1,37 +1,59 @@
 import { Provider, Roles } from "../const/User";
-import { Schema, model } from "mongoose";
 import { User } from "./interfaces/User";
+import sequelize from "../database/connection/sequelize";
+import { DataTypes, Optional, Model } from "sequelize";
+import { UserTokenModel } from "./UserTokenModel";
 
+interface UserCreationAttributes extends Optional<User, "id"> {}
 
+interface UserInstance extends Model<User, UserCreationAttributes>, User {
+	createdAt?: Date;
+	updatedAt?: Date;
+}
 
-const userSchema = new Schema<User>({
+const UserModel = sequelize.define<UserInstance>("User", {
+	id: {
+		type: DataTypes.UUID,
+		autoIncrement: false,
+		primaryKey: true,
+		unique: true,
+		allowNull: false,
+		defaultValue: DataTypes.UUIDV4,
+	},
 	UserName: {
-		type: String,
-		required: true,
+		type: DataTypes.STRING,
+		allowNull: false,
 	},
 	Email: {
-		type: String,
+		type: DataTypes.STRING,
+		allowNull: false,
 	},
 	Password: {
-		type: String,
+		type: DataTypes.STRING,
+		allowNull: false,
 	},
 	Provider: {
-		type: String,
-		default: Provider.WEBSITE,
+		type: DataTypes.STRING,
+		defaultValue: Provider.WEBSITE,
 	},
 	AvatarUrl: {
-		type: String,
+		type: DataTypes.STRING,
 	},
 	Roles: {
-		type: [String],
-		default: [Roles.USER],
-	},
-	CreatedDate: {
-		type: Date,
-		default: Date.now,
+		type: DataTypes.ARRAY(DataTypes.STRING),
+		defaultValue: [Roles.USER],
 	}
 });
 
-const UserModel = model<User>("User", userSchema);
+UserModel.hasMany(UserTokenModel, {
+	foreignKey: "UserId",
+	sourceKey: "id",
+	as: "UserTokens"
+});
+
+UserTokenModel.belongsTo(UserModel, {
+	foreignKey: "UserId",
+	as: "User"
+});
 
 export {UserModel};
