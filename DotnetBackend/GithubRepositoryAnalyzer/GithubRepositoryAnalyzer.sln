@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubRepositoryAnalyzer", "GithubRepositoryAnalyzer\GithubRepositoryAnalyzer.csproj", "{01404AB5-E3EC-4F22-BA22-F7E8A1DAB28C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubRepositoryAnalyzer.Domain", "GithubRepositoryAnalyzer.Domain\GithubRepositoryAnalyzer.Domain.csproj", "{DF6EC9C6-5F85-464C-B004-E2B4D680A950}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubRepositoryAnalyzer.Config", "GithubRepositoryAnalyzer.Config\GithubRepositoryAnalyzer.Config.csproj", "{3B4B146D-5F06-44C1-9BBF-B8A199067A17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubRepositoryAnalyzer.EventMessaging.Contracts", "GithubRepositoryAnalyzer.EventMessaging.Contracts\GithubRepositoryAnalyzer.EventMessaging.Contracts.csproj", "{A942D121-C68D-418C-A977-4322638C40E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubRepositoryAnalyzer.EventMessaging.Worker", "GithubRepositoryAnalyzer.EventMessaging.Worker\GithubRepositoryAnalyzer.EventMessaging.Worker.csproj", "{A019EB9B-898D-4A63-9B56-DD09E4830BEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{01404AB5-E3EC-4F22-BA22-F7E8A1DAB28C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01404AB5-E3EC-4F22-BA22-F7E8A1DAB28C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01404AB5-E3EC-4F22-BA22-F7E8A1DAB28C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01404AB5-E3EC-4F22-BA22-F7E8A1DAB28C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF6EC9C6-5F85-464C-B004-E2B4D680A950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF6EC9C6-5F85-464C-B004-E2B4D680A950}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF6EC9C6-5F85-464C-B004-E2B4D680A950}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF6EC9C6-5F85-464C-B004-E2B4D680A950}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B4B146D-5F06-44C1-9BBF-B8A199067A17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B4B146D-5F06-44C1-9BBF-B8A199067A17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B4B146D-5F06-44C1-9BBF-B8A199067A17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B4B146D-5F06-44C1-9BBF-B8A199067A17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A942D121-C68D-418C-A977-4322638C40E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A942D121-C68D-418C-A977-4322638C40E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A942D121-C68D-418C-A977-4322638C40E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A942D121-C68D-418C-A977-4322638C40E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A019EB9B-898D-4A63-9B56-DD09E4830BEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A019EB9B-898D-4A63-9B56-DD09E4830BEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A019EB9B-898D-4A63-9B56-DD09E4830BEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A019EB9B-898D-4A63-9B56-DD09E4830BEE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

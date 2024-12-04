@@ -1,0 +1,6 @@
+@GithubRepositoryAnalyzer.EventMessaging.Worker_HostAddress = http://localhost:5120
+
+GET {{GithubRepositoryAnalyzer.EventMessaging.Worker_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

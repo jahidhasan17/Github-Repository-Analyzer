@@ -1,0 +1,12 @@
+/DotnetBackend/GithubRepositoryAnalyzer/postgresdata
+/.vs
+/.idea
+**/Properties/AssemblyInfo.cs
+**/[Bb]in
+**/[Oo]bj
+**/[Dd]ebug
+**/[Rr]elease
+**/*.user
+**/*.aps
+**/*.eto
+/DotnetBackend/GithubRepositoryAnalyzer/.idea
