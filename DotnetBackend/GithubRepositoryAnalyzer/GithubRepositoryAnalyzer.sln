@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubRepositoryAnalyzer.Ev
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubRepositoryAnalyzer.EventMessaging.Worker", "GithubRepositoryAnalyzer.EventMessaging.Worker\GithubRepositoryAnalyzer.EventMessaging.Worker.csproj", "{A019EB9B-898D-4A63-9B56-DD09E4830BEE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubRepositoryAnalyzer.Kernel", "GithubRepositoryAnalyzer.Kernel\GithubRepositoryAnalyzer.Kernel.csproj", "{366AC3D3-88C9-4D20-80F1-7AAC0275C4A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{A019EB9B-898D-4A63-9B56-DD09E4830BEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A019EB9B-898D-4A63-9B56-DD09E4830BEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A019EB9B-898D-4A63-9B56-DD09E4830BEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{366AC3D3-88C9-4D20-80F1-7AAC0275C4A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{366AC3D3-88C9-4D20-80F1-7AAC0275C4A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{366AC3D3-88C9-4D20-80F1-7AAC0275C4A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{366AC3D3-88C9-4D20-80F1-7AAC0275C4A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

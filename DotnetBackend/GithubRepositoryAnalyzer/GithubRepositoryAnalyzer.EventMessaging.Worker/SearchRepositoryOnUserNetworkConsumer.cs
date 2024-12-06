@@ -1,7 +1,7 @@
 ﻿using AngleSharp;
 using GithubRepositoryAnalyzer.EventMessaging.Contracts;
 using GithubRepositoryAnalyzer.EventMessaging.Contracts.GithubRepositoryAnalyzer;
-using GithubRepositoryAnalyzer.EventMessaging.Worker.Services;
+using GithubRepositoryAnalyzer.Kernel.Cache;
 using MassTransit;
 
 namespace GithubRepositoryAnalyzer.EventMessaging.Worker;
@@ -49,7 +49,8 @@ public class SearchRepositoryOnUserNetworkConsumer(
             .Select((x, i) => new { Index = i, Value = x })
             .GroupBy(x => x.Index / 10)
             .Select(x => x.Select(v => v.Value).ToList())
-            .ToList();
+            .ToList()
+            .Take(3);
 
         foreach (var followingUsers in chunkedFollowingUsers)
         {
@@ -64,7 +65,8 @@ public class SearchRepositoryOnUserNetworkConsumer(
             var sendEndpoint = await context.GetSendEndpoint(new Uri("queue:SearchRepositories"));
             await sendEndpoint.Send(searchRepositories, context =>
             {
-                context.ConversationId = context.ConversationId;
+                context.CorrelationId = context.CorrelationId;
+                context.Headers.Set("UserToSearch", chunkedFollowingUsers.Sum(x => x.Count));
             });
         }
     }

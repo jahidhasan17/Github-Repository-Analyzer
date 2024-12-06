@@ -4,5 +4,7 @@ public class SearchRepositoryResult
 {
     public List<SearchRepositoryItem> ReposResult { get; set; }
     
-    public int SearchCount { get; set; }
+    public int FollowingUserSearchCompleted { get; set; }
+    
+    public int TotalSearchRequired { get; set; }
 }

@@ -3,7 +3,10 @@ using GithubRepositoryAnalyzer;
 using GithubRepositoryAnalyzer.Config.Extensions;
 using GithubRepositoryAnalyzer.Domain.Extensions;
 using GithubRepositoryAnalyzer.Domain.Services;
+using GithubRepositoryAnalyzer.Dto;
+using GithubRepositoryAnalyzer.Kernel.Extensions;
 using MassTransit;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,17 @@ builder.Services.AddControllers()
         });
 builder.Services.AddServices();
 builder.Services.AddHttpClient();
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+    ConnectionMultiplexer.Connect("localhost:5002"));
+
+builder.Services.AddStackExchangeRedisCache(
+    options =>
+    {
+        options.Configuration = "localhost:5002";
+    });
+
+builder.Services.AddRedisCacheStorage<SearchRepositoryResult>();
 
 builder.Services.AddMassTransit(x =>
 {

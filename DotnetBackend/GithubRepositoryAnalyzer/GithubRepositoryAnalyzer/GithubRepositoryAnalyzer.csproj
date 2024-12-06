@@ -26,6 +26,7 @@
     <ItemGroup>
       <ProjectReference Include="..\GithubRepositoryAnalyzer.Domain\GithubRepositoryAnalyzer.Domain.csproj" />
       <ProjectReference Include="..\GithubRepositoryAnalyzer.EventMessaging.Contracts\GithubRepositoryAnalyzer.EventMessaging.Contracts.csproj" />
+      <ProjectReference Include="..\GithubRepositoryAnalyzer.Kernel\GithubRepositoryAnalyzer.Kernel.csproj" />
     </ItemGroup>
 
 </Project>

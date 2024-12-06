@@ -1,7 +1,7 @@
 ﻿using AngleSharp;
 using GithubRepositoryAnalyzer.EventMessaging.Contracts;
 using GithubRepositoryAnalyzer.EventMessaging.Contracts.GithubRepositoryAnalyzer;
-using GithubRepositoryAnalyzer.EventMessaging.Worker.Services;
+using GithubRepositoryAnalyzer.Kernel.Cache;
 using MassTransit;
 
 namespace GithubRepositoryAnalyzer.EventMessaging.Worker;
@@ -14,6 +14,7 @@ public class SearchRepositoriesConsumer(
     {
         var searchModel = context.Message;
         var correlationId = context.CorrelationId.ToString();
+        var userToSearch = context.Headers.Get<int>("UserToSearch") ?? 0;
         
         if(correlationId == null)
         {
@@ -22,20 +23,12 @@ public class SearchRepositoriesConsumer(
         
         var searchResult = await FindRepositories(searchModel, null);
         
-        if (!cache.TryGetValue(correlationId, out SearchRepositoryResult searchRepositoryResult))
+        cache.AddOrUpdate(correlationId, new SearchRepositoryResult
         {
-           cache.AddOrUpdate(correlationId, new SearchRepositoryResult
-           {
-               ReposResult = searchResult,
-               SearchCount = 1
-           });
-        }
-        else
-        {
-            searchRepositoryResult.ReposResult.AddRange(searchResult);
-            searchRepositoryResult.SearchCount++;
-            cache.AddOrUpdate(correlationId, searchRepositoryResult);
-        }
+            ReposResult = searchResult,
+            FollowingUserSearchCompleted = searchModel.GithubHandles.Count,
+            TotalSearchRequired = userToSearch
+        });
     }
     
     public async Task<List<SearchRepositoryItem>> FindRepositories(SearchRepositories searchConfig, string githubAuthToken)
