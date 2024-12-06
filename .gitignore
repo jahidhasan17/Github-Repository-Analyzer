@@ -10,3 +10,4 @@
 **/*.aps
 **/*.eto
 /DotnetBackend/GithubRepositoryAnalyzer/.idea
+/DotnetBackend/GithubRepositoryAnalyzer/.env
