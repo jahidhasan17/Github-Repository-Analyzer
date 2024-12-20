@@ -1,25 +1,21 @@
 ﻿using GithubRepositoryAnalyzer.Dto;
 using GithubRepositoryAnalyzer.EventMessaging.Contracts;
 using GithubRepositoryAnalyzer.Kernel.Cache;
-using GithubRepositoryAnalyzer.Services.GithubUserSearchService;
-using GithubRepositoryAnalyzer.Services.RepositorySearchService;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
-using SearchRepositoryResult = GithubRepositoryAnalyzer.EventMessaging.Contracts.GithubRepositoryAnalyzer;
+using SearchRepositoryResult = GithubRepositoryAnalyzer.EventMessaging.Contracts.GithubRepositoryAnalyzer.SearchRepositoryResult;
 
 [ApiController]
 [Route("api")]
 public class SearchReposController(
-    IGithubUserSearchService githubUserSearchService,
-    IRepositorySearchService repositorySearchService,
     ISendEndpointProvider sendEndpointProvider,
-    ICacheStorage<SearchRepositoryResult.SearchRepositoryResult> cache)
+    ICacheStorage<SearchRepositoryResult> cache)
     : ControllerBase
 {
     [HttpGet("get/repositories")]
     public async Task<IActionResult> GetRepositories(string searchId)
     {
-        var searchResult = cache.GetValuesByPattern(searchId);
+        var searchResult = cache.GetValuesByPattern($"{searchId}*");
         
         if (searchResult == null)
         {

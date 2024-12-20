@@ -1,51 +1,32 @@
 ﻿using AngleSharp;
-using GithubRepositoryAnalyzer.Dto;
+using GithubRepositoryAnalyzer.EventMessaging.Contracts;
+using GithubRepositoryAnalyzer.EventMessaging.Contracts.GithubRepositoryAnalyzer;
 
-namespace GithubRepositoryAnalyzer.Services.RepositorySearchService;
+namespace GithubRepositoryAnalyzer.EventMessaging.Worker.RepositorySearchService;
 
 public class RepositorySearchService(IHttpClientFactory httpClientFactory) : IRepositorySearchService
 {
-    public async Task<SearchRepositoryResult> FindRepositories(SearchRepositoryConfiguration config, List<string> users, string githubAuthToken)
+    public async Task<List<SearchRepositoryItem>> FindRepositories(SearchRepositories searchConfig, string githubAuthToken)
     {
-        var searchResult = new SearchRepositoryResult { ReposResult = new List<SearchRepositoryItem>() };
+        var searchResult = new List<SearchRepositoryItem>();
         var client = httpClientFactory.CreateClient();
 
-        for (int batchStartIndex = config.SearchStartIndex; batchStartIndex < users.Count; batchStartIndex += config.PageSearchPerApiCall)
+        var tasks = searchConfig.GithubHandles.Select(user =>
+            FetchRepositoriesForUser(client, searchConfig.SearchText, searchConfig.SearchLanguage, user, githubAuthToken));
+
+        var batchResults = await Task.WhenAll(tasks);
+
+        foreach (var repos in batchResults)
         {
-            var userBatch = users
-                .Skip(batchStartIndex)
-                .Take(config.PageSearchPerApiCall)
-                .ToList();
-
-            var tasks = userBatch.Select(user => FetchRepositoriesForUser(client, config, user, githubAuthToken));
-
-            var batchResults = await Task.WhenAll(tasks);
-
-            foreach (var repos in batchResults)
-            {
-                searchResult.ReposResult.AddRange(repos);
-            }
-
-            if (searchResult.ReposResult.Count < config.MinDesireRepository)
-            {
-                continue;
-            }
-            
-            searchResult.HasMoreUserToSearch = true;
-            searchResult.UserSearchDoneCount = batchStartIndex + userBatch.Count;
-            
-            return searchResult;
+            searchResult.AddRange(repos);
         }
-        
-        searchResult.HasMoreUserToSearch = false;
-        searchResult.UserSearchDoneCount = users.Count;
 
         return searchResult;
     }
 
-    private async Task<List<SearchRepositoryItem>> FetchRepositoriesForUser(HttpClient client, SearchRepositoryConfiguration config, string user, string githubAuthToken)
+    private async Task<List<SearchRepositoryItem>> FetchRepositoriesForUser(HttpClient client, string searchText, string searchLanguage, string user, string githubAuthToken)
     {
-        var url = $"https://github.com/{user}?tab=repositories&q={config.SearchText}&type=&language={config.SearchLanguage}&sort=";
+        var url = $"https://github.com/{user}?tab=repositories&q={searchText}&type=&language={searchLanguage}&sort=";
 
         var request = new HttpRequestMessage(HttpMethod.Get, url);
         if (!string.IsNullOrEmpty(githubAuthToken))

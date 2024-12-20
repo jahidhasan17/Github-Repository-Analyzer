@@ -59,6 +59,25 @@ public static class DistributedCacheX
         });
     }
     
+    public static void SetRecord<T>(this IDatabase cache, string key, T value)
+    {
+        SetRecord(cache, key, value, new DistributedCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(2),
+        });
+    }
+    
+    private static void SetRecord<T>(
+        this IDatabase cache,
+        string key,
+        T value,
+        DistributedCacheEntryOptions options)
+    {
+        var jsonObject = JsonSerializer.Serialize(value, GetJsonSerializerOptions<T>());
+
+        cache.StringSet(key, jsonObject, TimeSpan.FromDays(2));
+    }
+    
     private static void SetRecord<T>(
         this IDistributedCache cache,
         string key,

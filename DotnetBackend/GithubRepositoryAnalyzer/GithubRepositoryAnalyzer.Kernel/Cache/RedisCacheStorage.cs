@@ -11,16 +11,18 @@ public class RedisCacheStorage<TValue>(
     IDistributedCache distributedCache,
     IConnectionMultiplexer connectionMultiplexer) : ICacheStorage<TValue>
 {
+    private IDatabase database => connectionMultiplexer.GetDatabase();
+    private IServer server => connectionMultiplexer.GetServer(connectionMultiplexer.GetEndPoints().First());
     private static readonly SpecificKeyWriteLock @lock = new();
     
-    public bool TryGetValue(string key, out TValue value) => distributedCache.TryGetRecord(key, out value);
+    public bool TryGetValue(string key, out TValue value) => database.TryGetRecord(key, out value);
 
     public void AddOrUpdate(string key, TValue value)
     {
         var semaphore = @lock.Lock(key);
         try
         {
-            distributedCache.SetRecord(key, value);
+            database.SetRecord(key, value);
         }
         finally
         {
@@ -30,10 +32,6 @@ public class RedisCacheStorage<TValue>(
     
     public IEnumerable<TValue> GetValuesByPattern(string pattern)
     {
-        var database = connectionMultiplexer.GetDatabase();
-        var endpoints = connectionMultiplexer.GetEndPoints();
-        var server = connectionMultiplexer.GetServer(endpoints.First());
-
         // Use KEYS command to find matching keys
         var keys = server.Keys(pattern: pattern).ToList();
         var results = new List<TValue>();
@@ -44,6 +42,10 @@ public class RedisCacheStorage<TValue>(
             {
                 results.Add(value);
             }
+            /*if (database.TryGetRecord(key.ToString(), out TValue value))
+            {
+                results.Add(value);
+            }*/
         }
 
         return results;

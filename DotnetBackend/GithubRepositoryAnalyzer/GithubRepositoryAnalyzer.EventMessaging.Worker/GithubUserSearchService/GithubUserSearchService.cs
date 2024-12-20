@@ -1,11 +1,11 @@
 ﻿using AngleSharp;
-using GithubRepositoryAnalyzer.Dto;
+using GithubRepositoryAnalyzer.EventMessaging.Contracts.GithubRepositoryAnalyzer;
 
-namespace GithubRepositoryAnalyzer.Services.GithubUserSearchService;
+namespace GithubRepositoryAnalyzer.EventMessaging.Worker.GithubUserSearchService;
 
 public class GithubUserSearchService(IHttpClientFactory httpClientFactory) : IGithubUserSearchService
 {
-    public async Task<List<GithubUser>> GetUserGithubInfo(List<string> githubHandles, string githubAuthToken)
+    public async Task<List<GithubUser>> GetUserGithubInfo(List<string> githubHandles, string? githubAuthToken)
     {
         var client = httpClientFactory.CreateClient();
 
@@ -39,19 +39,16 @@ public class GithubUserSearchService(IHttpClientFactory httpClientFactory) : IGi
         var githubUsers = await Task.WhenAll(tasks); // Execute all tasks concurrently
         return githubUsers.ToList();
     }
-
-    public async Task<List<string>> GetAllFollowingUsers(List<GithubUser> users, string githubAuthToken)
+    
+    public async Task<List<string>> GetAllFollowingUsers(GithubUser user, string githubAuthToken)
     {
         var client = httpClientFactory.CreateClient();
         var tasks = new List<Task<(string userId, string content)>>();
 
-        foreach (var user in users)
+        for (int i = 1; i <= (user.FollowingCount + 49) / 50; i++)
         {
-            for (int i = 1; i <= (user.FollowingCount + 49) / 50; i++)
-            {
-                var url = $"https://github.com/{user.UserId}?page={i}&tab=following";
-                tasks.Add(FetchFollowingPageAsync(client, url, githubAuthToken, user.UserId));
-            }
+            var url = $"https://github.com/{user.UserId}?page={i}&tab=following";
+            tasks.Add(FetchFollowingPageAsync(client, url, githubAuthToken, user.UserId));
         }
 
         var responses = await Task.WhenAll(tasks);

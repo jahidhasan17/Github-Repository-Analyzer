@@ -3,10 +3,10 @@ using GithubRepositoryAnalyzer;
 using GithubRepositoryAnalyzer.Config.Extensions;
 using GithubRepositoryAnalyzer.Domain.Extensions;
 using GithubRepositoryAnalyzer.Domain.Services;
-using GithubRepositoryAnalyzer.Dto;
 using GithubRepositoryAnalyzer.Kernel.Extensions;
 using MassTransit;
 using StackExchange.Redis;
+using SearchRepositoryResult = GithubRepositoryAnalyzer.EventMessaging.Contracts.GithubRepositoryAnalyzer.SearchRepositoryResult;
 
 var builder = WebApplication.CreateBuilder(args);
 

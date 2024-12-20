@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
 using GithubRepositoryAnalyzer.EventMessaging.Contracts.GithubRepositoryAnalyzer;
 using GithubRepositoryAnalyzer.EventMessaging.Worker;
+using GithubRepositoryAnalyzer.EventMessaging.Worker.GithubUserSearchService;
+using GithubRepositoryAnalyzer.EventMessaging.Worker.RepositorySearchService;
 using GithubRepositoryAnalyzer.Kernel.Extensions;
 using MassTransit;
 using StackExchange.Redis;
@@ -42,6 +44,9 @@ builder.Services.AddHttpClient();
 builder.Services.AddRedisCacheStorage<GithubUser>();
 builder.Services.AddRedisCacheStorage<List<string>>();
 builder.Services.AddRedisCacheStorage<SearchRepositoryResult>();
+builder.Services.AddScoped<IGithubUserSearchService, GithubUserSearchService>();
+builder.Services.AddScoped<IRepositorySearchService, RepositorySearchService>();
+
 
 
 var app = builder.Build();
