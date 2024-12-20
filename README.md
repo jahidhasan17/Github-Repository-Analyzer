@@ -9,15 +9,6 @@
 
 # Features
 
-### 1. Search Repository
+### Search Repository
 Some we want to know or find some related repositories some specific topic or language. So we can search it on a user repository list. But it is very time consuming as we have to search on every individual user repository List. So in this website you can bulk search on your network whom you follow based on specific text or languages which will save your lots of time.
 ![Search Repository Feature](https://github.com/Hassan-Jahid17/Github-Repository-Analyzer/blob/master/images/search-features1.jpg)
-
-<br />
-<br />
-<br />
-<br />
-
-### 2. Repository Timeline
-Some we might interested to compare repository of a user with ours. In this features user can see the timeline of respository of two user with repository details. 
-![Search Timeline Feature](https://github.com/Hassan-Jahid17/Github-Repository-Analyzer/blob/master/images/search-timeline.jpg)
