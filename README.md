@@ -1,7 +1,6 @@
 # Github Repository Analyzer
 
 * A web scraping project where user can search can search repositories on their network (whom they follow) based on text and language. 
-* Also can view timeline of repository of two users with repository details. 
 * Implemented proper authentication mechanism (autheticate with Access token and Refresh token)
 
 ****Frontend Tools : ReactJs, TypeScript, TailwindCSS.**** <br />
