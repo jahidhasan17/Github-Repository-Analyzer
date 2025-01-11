@@ -1,5 +1,4 @@
-﻿using AngleSharp;
-using GithubRepositoryAnalyzer.EventMessaging.Contracts;
+﻿using GithubRepositoryAnalyzer.EventMessaging.Contracts;
 using GithubRepositoryAnalyzer.EventMessaging.Contracts.GithubRepositoryAnalyzer;
 using GithubRepositoryAnalyzer.EventMessaging.Worker.GithubUserSearchService;
 using GithubRepositoryAnalyzer.Kernel.Cache;
@@ -63,12 +62,17 @@ public class SearchRepositoryOnUserNetworkConsumer(
                 SearchLanguage = searchModel.SearchLanguage
             };
 
+            var moreUserToSearch =
+                (searchModel.SearchStartIndexFromFollowingUsers + chunkedFollowingUsers.Sum(x => x.Count)) <
+                userFollowing.Count;
+
             // await context.Send(searchRepositories);
             var sendEndpoint = await context.GetSendEndpoint(new Uri("queue:SearchRepositories"));
             await sendEndpoint.Send(searchRepositories, context =>
             {
                 context.CorrelationId = contextCorrelationId;
                 context.Headers.Set("UserToSearch", chunkedFollowingUsers.Sum(x => x.Count));
+                context.Headers.Set("MoreUserToSearch", moreUserToSearch);
             });
         }
     }

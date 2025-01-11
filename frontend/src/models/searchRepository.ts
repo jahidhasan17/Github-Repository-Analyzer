@@ -1,12 +1,12 @@
 export interface SearchRepositoryItem{
-	Name: string,
-	UserName: string,
-	ForkName?: string,
-	Description ?: string,
-	Language ?: string,
-	Star ?: string,
-	Fork ?: string,
-	ModifiedDate ?: string,
+	name: string,
+	userName: string,
+	forkName?: string,
+	description ?: string,
+	language ?: string,
+	star ?: string,
+	fork ?: string,
+	modifiedDate ?: string,
 }
 
 

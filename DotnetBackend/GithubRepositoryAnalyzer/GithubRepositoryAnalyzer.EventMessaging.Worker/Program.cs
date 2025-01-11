@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using GithubRepositoryAnalyzer.EventMessaging.Contracts.GithubRepositoryAnalyzer;
 using GithubRepositoryAnalyzer.EventMessaging.Worker;
+using GithubRepositoryAnalyzer.EventMessaging.Worker.Diagnostics;
 using GithubRepositoryAnalyzer.EventMessaging.Worker.GithubUserSearchService;
 using GithubRepositoryAnalyzer.EventMessaging.Worker.RepositorySearchService;
 using GithubRepositoryAnalyzer.Kernel.Extensions;
@@ -32,12 +33,12 @@ builder.Services.AddMassTransit(x =>
 });
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-    ConnectionMultiplexer.Connect("localhost:5002"));
+    ConnectionMultiplexer.Connect(builder.Configuration["ConnectionSettings:Redis"]!));
 
 builder.Services.AddStackExchangeRedisCache(
     options =>
     {
-        options.Configuration = "localhost:5002";
+        options.Configuration = builder.Configuration["ConnectionSettings:Redis"]!;
     });
 
 builder.Services.AddHttpClient();
@@ -47,7 +48,7 @@ builder.Services.AddRedisCacheStorage<SearchRepositoryResult>();
 builder.Services.AddScoped<IGithubUserSearchService, GithubUserSearchService>();
 builder.Services.AddScoped<IRepositorySearchService, RepositorySearchService>();
 
-
+builder.AddOpenTelemetry();
 
 var app = builder.Build();
 

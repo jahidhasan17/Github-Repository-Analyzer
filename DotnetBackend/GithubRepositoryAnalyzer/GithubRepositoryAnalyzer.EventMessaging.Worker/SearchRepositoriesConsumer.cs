@@ -1,5 +1,4 @@
-﻿using AngleSharp;
-using GithubRepositoryAnalyzer.EventMessaging.Contracts;
+﻿using GithubRepositoryAnalyzer.EventMessaging.Contracts;
 using GithubRepositoryAnalyzer.EventMessaging.Contracts.GithubRepositoryAnalyzer;
 using GithubRepositoryAnalyzer.EventMessaging.Worker.RepositorySearchService;
 using GithubRepositoryAnalyzer.Kernel.Cache;
@@ -16,6 +15,7 @@ public class SearchRepositoriesConsumer(
         var searchModel = context.Message;
         var correlationId = context.CorrelationId.ToString();
         var userToSearch = context.Headers.Get<int>("UserToSearch") ?? 0;
+        var moreUserToSearch = context.Headers.Get<bool>("MoreUserToSearch") ?? false;
         
         if(correlationId == null)
         {
@@ -30,7 +30,8 @@ public class SearchRepositoriesConsumer(
         {
             ReposResult = searchResult,
             FollowingUserSearchCompleted = searchModel.GithubHandles.Count,
-            TotalSearchRequired = userToSearch
+            TotalSearchRequired = userToSearch,
+            MoreUserToSearch = moreUserToSearch,
         });
     }
 }

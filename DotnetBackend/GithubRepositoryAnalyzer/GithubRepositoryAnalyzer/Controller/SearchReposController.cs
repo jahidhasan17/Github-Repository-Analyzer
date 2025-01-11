@@ -1,18 +1,73 @@
 ﻿using GithubRepositoryAnalyzer.Dto;
 using GithubRepositoryAnalyzer.EventMessaging.Contracts;
+using GithubRepositoryAnalyzer.EventMessaging.Contracts.GithubRepositoryAnalyzer;
 using GithubRepositoryAnalyzer.Kernel.Cache;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
-using SearchRepositoryResult = GithubRepositoryAnalyzer.EventMessaging.Contracts.GithubRepositoryAnalyzer.SearchRepositoryResult;
 
 [ApiController]
 [Route("api")]
 public class SearchReposController(
     ISendEndpointProvider sendEndpointProvider,
-    ICacheStorage<SearchRepositoryResult> cache)
+    ICacheStorage<SearchRepositoryResult> cache,
+    ILogger<SearchReposController> logger)
     : ControllerBase
 {
+    
     [HttpGet("get/repositories")]
+    public async Task<IActionResult> GetRepositories(string searchId)
+    {
+        var staticData = new
+        {
+            reposResult = new[]
+            {
+                new
+                {
+                    name = "Algorithms",
+                    userName = "imovishek",
+                    forkName = "PetarV-/Algorithms",
+                    description = "Several algorithms and data structures implemented in C++ by me (credited to others where necessary).",
+                    language = "C++",
+                    star = "1",
+                    fork = (string?)null,
+                    modifiedDate = "May 17, 2019"
+                },
+                new
+                {
+                    name = "LearnAlgoDesktop",
+                    userName = "imovishek",
+                    forkName = "haque-lubna/LearnAlgoDesktop",
+                    description = "JAVA project",
+                    language = "Java",
+                    star = (string?)null,
+                    fork = (string?)null,
+                    modifiedDate = "Aug 16, 2018"
+                },
+                new
+                {
+                    name = "Data-Structures-and-Algorithms-Notebook-Bangla",
+                    userName = "mhRumi",
+                    forkName = "KhanShaheb34/Data-Structures-and-Algorithms-Notebook",
+                    description = "Some DS and Algorithms implementation in various languages and Notebook in Bangla",
+                    language = "C++",
+                    star = "5",
+                    fork = (string?)null,
+                    modifiedDate = "Mar 26, 2023"
+                }
+            },
+            followingUserSearchCompleted = 30,
+            totalSearchRequired = 0,
+            moreUserToSearch = true,
+            searchState = "Completed"
+        };
+        
+        return Ok(new
+        {
+            Data = staticData
+        });
+    }
+    
+    /*[HttpGet("get/repositories")]
     public async Task<IActionResult> GetRepositories(string searchId)
     {
         var searchResult = cache.GetValuesByPattern($"{searchId}*");
@@ -21,66 +76,57 @@ public class SearchReposController(
         {
             return Ok(new
             {
-                Message = "Search is processing.",
+                Message = "Search Id was not Found.",
+                Data = new SearchRepositoryResult
+                {
+                    SearchState = SearchState.Processing,
+                }
             });
         }
-        
-        var firstSearchResult = searchResult.FirstOrDefault();
-        
-        var searchCompleted = searchResult.Sum(x => x.FollowingUserSearchCompleted);
 
-        if (searchCompleted >= firstSearchResult.TotalSearchRequired)
+        var searchRepositoryResults = searchResult.ToList();
+        var firstSearchResult = searchRepositoryResults.MaxBy(s => s.TotalSearchRequired);
+        
+        var searchCompleted = searchRepositoryResults.Sum(x => x.FollowingUserSearchCompleted);
+
+        if (searchCompleted >= firstSearchResult?.TotalSearchRequired)
         {
             return Ok(new
             {
-                Message = "Search completed.",
-                Data = searchResult
+                Data = new SearchRepositoryResult
+                {
+                    ReposResult = searchRepositoryResults.SelectMany(d => d.ReposResult).ToList(),
+                    FollowingUserSearchCompleted = searchRepositoryResults.Sum(d => d.FollowingUserSearchCompleted),
+                    MoreUserToSearch = firstSearchResult.MoreUserToSearch,
+                    SearchState = SearchState.Completed,
+                }
             });
         }
         
         return Ok(new
         {
-            Message = "Search is processing.",
+            Data = new SearchRepositoryResult
+            {
+                SearchState = SearchState.Processing,
+            }
         });
-    }
+    }*/
     
     [HttpPost("search/repositories")]
     public async Task<IActionResult> SearchRepositories([FromBody] SearchRepositoryQuery query)
     {
-        string githubAccessToken = Request.Headers["GithubAccessToken"];
-        bool isLoggedIn = false; // !string.IsNullOrEmpty(githubAccessToken);
-
-        /*if (isLoggedIn)
-        {
-            githubAccessToken = EncryptDecrypt.Decrypt(githubAccessToken);
-        }*/
-
-        // Validate request
-        /*var validationResult = SearchRepositoryValidator.Validate(query);
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(validationResult.Message);
-        }*/
-
-        /*var userInfo = await githubUserSearchService.GetUserGithubInfo([query.GithubHandle], githubAccessToken);
-        var followingUsers = await githubUserSearchService.GetAllFollowingUsers(userInfo, githubAccessToken);
-
-        var searchConfig = new SearchRepositoryConfiguration
-        {
-            SearchText = query.QueryText,
-            SearchLanguage = query.QueryLanguage,
-            IsLoggedIn = isLoggedIn,
-            PageSearchPerApiCall = isLoggedIn ? 50 : 20,
-            TotalPageSearchPerApiCall = isLoggedIn ? 200 : 60,
-            WaitBetweenApiCall = 2000,
-            MinDesireRepository = isLoggedIn ? 10 : 4,
-            TotalTimeoutForApiCall = isLoggedIn ? 10000 : 8000,
-            SearchStartIndex = query.QuerySearchStartIndex
-        };
-        
-        var searchResult = await repositorySearchService.FindRepositories(searchConfig, followingUsers, githubAccessToken);*/
-        
         var correlationId = Guid.NewGuid();
+        
+        return Ok(new
+        {
+            Message = "Repositories retrieved successfully.",
+            Data = new
+            {
+                SearchId = correlationId,
+            }
+        });
+        
+        logger.LogCritical("Current Searching Correlation Id - " + correlationId);
         
         var sendEndpoint = await sendEndpointProvider.GetSendEndpoint(new Uri("queue:SearchRepositoryOnUserNetwork"));
         await sendEndpoint.Send(new SearchRepositoryOnUserNetwork
@@ -92,6 +138,15 @@ public class SearchReposController(
         }, context =>
         {
             context.CorrelationId = correlationId;
+        });
+        
+        var cacheKey = $"{correlationId}:{Guid.NewGuid().ToString()}:MyValue";
+        
+        cache.AddOrUpdate(cacheKey, new SearchRepositoryResult
+        {
+            ReposResult = new List<SearchRepositoryItem>(),
+            FollowingUserSearchCompleted = 0,
+            TotalSearchRequired = 0,
         });
 
         return Ok(new

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using GithubRepositoryAnalyzer;
 using GithubRepositoryAnalyzer.Config.Extensions;
+using GithubRepositoryAnalyzer.Diagnostics;
 using GithubRepositoryAnalyzer.Domain.Extensions;
 using GithubRepositoryAnalyzer.Domain.Services;
 using GithubRepositoryAnalyzer.Kernel.Extensions;
@@ -25,12 +26,12 @@ builder.Services.AddServices();
 builder.Services.AddHttpClient();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-    ConnectionMultiplexer.Connect("localhost:5002"));
+    ConnectionMultiplexer.Connect(builder.Configuration["ConnectionSettings:Redis"]!));
 
 builder.Services.AddStackExchangeRedisCache(
     options =>
     {
-        options.Configuration = "localhost:5002";
+        options.Configuration = builder.Configuration["ConnectionSettings:Redis"]!;
     });
 
 builder.Services.AddRedisCacheStorage<SearchRepositoryResult>();
@@ -43,6 +44,8 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
+builder.AddOpenTelemetry();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -51,14 +54,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
+
 app.UseHttpsRedirection();
 
 app.UseCors(policyBuilder => policyBuilder
     .AllowAnyOrigin()
     .AllowAnyHeader()
     .AllowAnyMethod());
-
-app.UseRouting();
 
 app.UseEndpoints(
     endpoints =>

@@ -1,6 +1,7 @@
 ﻿using GithubRepositoryAnalyzer.Config.Options;
 using GithubRepositoryAnalyzer.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace GithubRepositoryAnalyzer.Domain.Context;
@@ -13,9 +14,14 @@ public class ConfigContext : DbContext
 
     private readonly ConnectionSettings ConnectionSettings;
 
-    public ConfigContext(IOptions<ConnectionSettings> connectionSettings)
+    private readonly ILogger<ConfigContext> logger;
+
+    public ConfigContext(IOptions<ConnectionSettings> connectionSettings, ILogger<ConfigContext> logger)
     {
+        this.logger = logger;
         ConnectionSettings = connectionSettings.Value;
+        this.logger.LogDebug("<==================================================Database Connection String==================================>");
+        this.logger.LogDebug(ConnectionSettings.DatabaseConnection);
     }
 
     /// <inheritdoc />
