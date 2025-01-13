@@ -2,7 +2,7 @@
 
 public class SearchRepositoryResult
 {
-    public List<SearchRepositoryItem> ReposResult { get; set; }
+    public IEnumerable<SearchRepositoryItem> ReposResult { get; set; }
     
     public int FollowingUserSearchCompleted { get; set; }
     

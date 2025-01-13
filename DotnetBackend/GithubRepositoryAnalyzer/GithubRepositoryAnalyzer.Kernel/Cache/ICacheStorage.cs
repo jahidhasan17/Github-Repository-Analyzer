@@ -7,4 +7,6 @@ public interface ICacheStorage<TValue>
     void AddOrUpdate(string key, TValue value);
 
     IEnumerable<TValue> GetValuesByPattern(string pattern);
+
+    public bool AnyKeysWithPattern(string pattern);
 }

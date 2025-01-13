@@ -29,6 +29,11 @@ builder.Services.AddMassTransit(x =>
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.ConfigureEndpoints(context);
+        
+        cfg.UseMessageRetry(retryConfig =>
+        {
+            retryConfig.Interval(2, TimeSpan.FromSeconds(1));
+        });
     });
 });
 

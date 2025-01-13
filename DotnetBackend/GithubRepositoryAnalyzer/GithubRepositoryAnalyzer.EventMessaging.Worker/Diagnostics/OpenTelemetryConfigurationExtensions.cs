@@ -32,6 +32,7 @@ public static class OpenTelemetryConfigurationExtensions
                 tracing
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
+                    .AddSource(DiagnosticHeaders.DefaultListenerName)
                     .AddNpgsql()
                     .AddRedisInstrumentation()
                     .AddOtlpExporter(option =>

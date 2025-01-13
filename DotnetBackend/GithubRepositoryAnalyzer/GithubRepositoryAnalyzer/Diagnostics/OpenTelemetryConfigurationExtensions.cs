@@ -33,6 +33,7 @@ public static class OpenTelemetryConfigurationExtensions
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddSource(RabbitMqDiagnostics.ActivitySourceName)
+                    .AddSource(DiagnosticHeaders.DefaultListenerName)
                     .AddNpgsql()
                     .AddRedisInstrumentation()
                     .AddOtlpExporter(option =>

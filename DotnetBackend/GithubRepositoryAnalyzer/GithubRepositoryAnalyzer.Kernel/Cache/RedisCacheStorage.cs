@@ -16,6 +16,13 @@ public class RedisCacheStorage<TValue>(
     private static readonly SpecificKeyWriteLock @lock = new();
     
     public bool TryGetValue(string key, out TValue value) => database.TryGetRecord(key, out value);
+    
+    public bool AnyKeysWithPattern(string pattern)
+    {
+        var keys = server.Keys(pattern: pattern, pageSize: 1);
+        
+        return keys.Any();
+    }
 
     public void AddOrUpdate(string key, TValue value)
     {
